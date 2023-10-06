@@ -89,6 +89,9 @@ start
 		dex
 		bpl ]lp
 
+		; break the signature, so the next reset will work 
+		stz <crossdev_signature
+
 		; $$TODO, unmap outselves from $A000, and swap in RAM
 
 		jmp (crossdev_pc)
