@@ -14,7 +14,6 @@
 ;   Copy a file to the SDCARD if FoenixMgr has placed one in memory (pcopy)
 ;
 
-
 		mx %11
 
 ; some Kernel Stuff
@@ -97,6 +96,23 @@ start
 		jmp (crossdev_pc)
 
 :no_crossdev
+
+		; check for pcopy, file copy request
+		ldx #7
+]lp
+		lda |txt_copyfile,x
+		cmp <crossdev_signature,x
+		bne :no_pcopy
+
+		dex
+		bpl ]lp
+
+		; break the signature, so the next reset will work 
+		stz <crossdev_signature
+
+		jsr pcopy
+
+:no_pcopy
 		; just boot the machine, into the next program
 
 		lda #$42	; assuming we are block $41, maybe there's a way to sniff this?
@@ -105,6 +121,7 @@ start
 
 ;------------------------------------------------------------------------------
 txt_crossdev asc 'CROSSDEV'
+txt_copyfile asc 'COPYFILE'
 
 ;------------------------------------------------------------------------------
 ; Strings and other includes
@@ -112,6 +129,8 @@ txt_crossdev asc 'CROSSDEV'
 		put mmu.s
 		put term.s
 		put file.s
+		put crc32.s
+		put pcopy.s
 
 ; pad to the end
 		ds $C000-*,$EA

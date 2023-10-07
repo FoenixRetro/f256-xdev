@@ -15,6 +15,8 @@ file_bytes_read ds 3
 file_to_read ds 1
 		dend
 
+file_buffer equ $200  ; $$TODO, remove this for writes
+
 ;
 ; AX = pFileName (CString)
 ;
@@ -281,7 +283,7 @@ fclose
 txt_data_read asc 'Data Read:'
 		db 0
 
-	do 0
+	do 1
 ;
 ; mmu read address is the address
 ; AXY - Num Bytes to write
