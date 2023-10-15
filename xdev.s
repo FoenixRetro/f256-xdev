@@ -74,7 +74,7 @@ sig		db $f2,$56		; signature
 		db 0
 		;asc '<file>'	; argument list
 		db 0
-		asc '"xdev", CrossDev Tools -> FoenixMgr[runpgx,runpgz,pcopy].'	; description
+		asc 'CrossDev - FoenixMgr[runpgx,runpgz,pcopy].'	; description
 		db 0
 
 start
