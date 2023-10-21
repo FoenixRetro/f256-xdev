@@ -24,6 +24,7 @@ term_temp1  ds 4
 ;TermPrintAXI   - print value in AX, as DEC
 ;TermPrintAXYH  - print values in AXY, as HEX
 ;TermSetXY      - cursor position X in X, Y in Y
+;TermCR         - output a Carriage Return
 
 ;------------------------------------------------------------------------------
 TermInit
