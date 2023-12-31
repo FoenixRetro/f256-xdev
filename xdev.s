@@ -51,6 +51,8 @@ args_buflen = $42
 
 old_sp = $A0
 
+mmu_lock_springboard = $60 ; about 17 bytes
+
 crossdev_signature = $80
 crossdev_pc        = $88  ; jump to here
 
@@ -91,9 +93,36 @@ start
 		; break the signature, so the next reset will work 
 		stz <crossdev_signature
 
-		; $$TODO, unmap outselves from $A000, and swap in RAM
+		; we need to unmap ourselves so slot 5 is mapped to slot 5
+		jsr mmu_unlock
 
-		jmp (crossdev_pc)
+		lda #5
+		sta old_mmu0+5	; when lock is called it will map $A000 to physcial $A000
+
+		; need to place a copy of mmu_lock, where it won't be unmapped
+		ldx #mmu_lock_end-mmu_lock
+]lp		lda mmu_lock,x
+		sta mmu_lock_springboard,x
+		dex
+		bpl ]lp
+
+		; construct more stub code
+		lda #$20   ; jsr mmu_lock_springboard
+		sta temp0
+		lda #<mmu_lock_springboard
+		sta temp0+1
+		lda #>mmu_lock_springboard
+		sta temp0+2 
+
+		lda #$6C ; jmp (|abs)
+		sta temp0+3
+
+		lda #<crossdev_pc
+		sta <temp0+4
+		lda #>crossdev_pc
+		sta <temp0+5
+
+		jmp temp0
 
 :no_crossdev
 
